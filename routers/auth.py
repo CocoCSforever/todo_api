@@ -20,8 +20,8 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 # These are used to create the signature for a JWT
-SECRET_KEY = ''
-ALGORITHM = ''
+SECRET_KEY = 'beb0cc8b62a2b1289aafa9415c3e5ff3522bb4efa6636b9e83a0b647f546a310'
+ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
@@ -64,8 +64,13 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
         is_active=True
     )
 
-    db.add(create_user_model)
-    db.commit()
+    
+    if create_user_model:
+        db.add(create_user_model)
+        db.commit()
+        return {"message": "User created successfully"}
+    else:
+        return {"message": "Failed to Create User"}
 
 
 @router.post("/token/", response_model=Token)
